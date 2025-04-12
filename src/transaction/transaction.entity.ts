@@ -9,13 +9,16 @@ export class Transaction {
   userId: string;
 
   @Column()
-  type: string; // 'topup', 'withdraw', 'transfer'
+  type: string;  // e.g., topup, withdraw, transfer
 
   @Column()
   amount: number;
 
   @Column({ nullable: true })
   description: string;
+
+  @Column({ default: false })
+  flagged: boolean;  // for admin flagging
 
   @CreateDateColumn()
   createdAt: Date;

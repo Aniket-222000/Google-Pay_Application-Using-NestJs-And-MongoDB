@@ -1,6 +1,5 @@
 export class GenerateQrDto {
-    recipientId: string;
-    amount: number;
-    description?: string;
-  }
-  
+  recipientId: string;
+  amount: number;
+  description?: string;
+}

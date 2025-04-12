@@ -28,7 +28,7 @@ export class WalletService {
     const wallet = await this.getWalletByUserId(userId);
     wallet.balance += amount;
     await this.walletRepository.save(wallet);
-    // Record transaction
+
     await this.transactionService.recordTransaction({
       type: 'topup',
       userId,
@@ -48,6 +48,7 @@ export class WalletService {
     }
     wallet.balance -= amount;
     await this.walletRepository.save(wallet);
+
     await this.transactionService.recordTransaction({
       type: 'withdraw',
       userId,
@@ -57,7 +58,6 @@ export class WalletService {
     return wallet;
   }
 
-  // Send money from one user to another by recipient ID
   async sendMoneyByRecipientId(senderId: string, recipientId: string, amount: number): Promise<{ senderWallet: Wallet, recipientWallet: Wallet }> {
     if (amount <= 0) {
       throw new BadRequestException('Transfer amount must be positive');
@@ -67,11 +67,12 @@ export class WalletService {
       throw new BadRequestException('Insufficient funds');
     }
     const recipientWallet = await this.getWalletByUserId(recipientId);
+
     senderWallet.balance -= amount;
     recipientWallet.balance += amount;
     await this.walletRepository.save(senderWallet);
     await this.walletRepository.save(recipientWallet);
-    // Record transactions for both parties
+
     await this.transactionService.recordTransaction({
       type: 'transfer',
       userId: senderId,
@@ -81,23 +82,22 @@ export class WalletService {
     await this.transactionService.recordTransaction({
       type: 'transfer',
       userId: recipientId,
-      amount: amount,
+      amount,
       description: `Received ${amount} from user ${senderId}`,
     });
     return { senderWallet, recipientWallet };
   }
 
+  // NEW: Returns the total funds across all wallets.
+  async getTotalFunds(): Promise<number> {
+    const wallets = await this.walletRepository.find();
+    return wallets.reduce((sum, wallet) => sum + wallet.balance, 0);
+  }
+
+  // NEW: Adjusts a user's wallet balance by a specified amount.
   async adjustBalance(userId: string, amount: number): Promise<Wallet> {
     const wallet = await this.getWalletByUserId(userId);
     wallet.balance += amount;
-    await this.walletRepository.save(wallet);
-    return wallet;
+    return this.walletRepository.save(wallet);
   }
-  
-  async getTotalFunds(): Promise<number> {
-    const wallets = await this.walletRepository.find();
-    return wallets.reduce((sum, w) => sum + w.balance, 0);
-  }
-  
-
 }

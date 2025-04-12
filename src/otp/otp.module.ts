@@ -1,4 +1,3 @@
-// src/otp/otp.module.ts
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { OtpService } from './otp.service';

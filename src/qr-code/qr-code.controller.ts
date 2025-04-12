@@ -11,7 +11,6 @@ export class QrCodeController {
 
   @Post('generate')
   async generateQrCode(@Body() generateQrDto: GenerateQrDto, @Res() res: Response) {
-    // Generate a QR code data URL (Base64-encoded string)
     const qrCodeDataUrl = await this.qrCodeService.generateQrCode(generateQrDto);
     return res.json({ qrCode: qrCodeDataUrl });
   }

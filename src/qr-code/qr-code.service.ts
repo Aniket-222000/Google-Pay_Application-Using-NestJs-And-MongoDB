@@ -5,7 +5,7 @@ import { GenerateQrDto } from './dto/generate-qr.dto';
 @Injectable()
 export class QrCodeService {
   async generateQrCode(generateQrDto: GenerateQrDto): Promise<string> {
-    // Here we simply encode the JSON string of the passed payload.
+    // Encode the payload as a JSON string
     const dataToEncode = JSON.stringify(generateQrDto);
     return QRCode.toDataURL(dataToEncode);
   }

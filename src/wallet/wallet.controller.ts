@@ -34,8 +34,7 @@ export class WalletController {
   @Post('send')
   async sendMoney(@Req() req, @Body() sendMoneyDto: SendMoneyDto) {
     const senderId = req.user.userId;
-    const { recipientId, amount } = sendMoneyDto;
-    const result = await this.walletService.sendMoneyByRecipientId(senderId, recipientId, amount);
+    const result = await this.walletService.sendMoneyByRecipientId(senderId, sendMoneyDto.recipientId, sendMoneyDto.amount);
     return result;
   }
 }

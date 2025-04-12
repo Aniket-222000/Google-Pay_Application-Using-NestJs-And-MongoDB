@@ -11,5 +11,5 @@ export class OtpController {
     return { message: 'OTP sent to your email' };
   }
 
-  // Optionally, add a verify endpoint if you implement OTP storage and verification.
+  // Optionally add a verify endpoint here if you implement OTP verification
 }

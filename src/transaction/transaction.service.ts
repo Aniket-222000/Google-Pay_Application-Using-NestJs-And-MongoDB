@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Transaction } from './transaction.entity';
 import { Repository } from 'typeorm';
+import { Transaction } from './transaction.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 import { ObjectId } from 'mongodb';
 
 @Injectable()
@@ -12,8 +12,8 @@ export class TransactionService {
   ) {}
 
   async recordTransaction(data: Partial<Transaction>): Promise<Transaction> {
-    const transaction = this.transactionRepository.create(data);
-    return this.transactionRepository.save(transaction);
+    const txn = this.transactionRepository.create(data);
+    return this.transactionRepository.save(txn);
   }
 
   async getTransactionsByUser(userId: string): Promise<Transaction[]> {
@@ -23,26 +23,24 @@ export class TransactionService {
   async getAll(query: any = {}): Promise<Transaction[]> {
     return this.transactionRepository.find();
   }
-  
+
   async flagTransaction(id: string, flag: boolean): Promise<Transaction> {
-    // Convert the id string to an ObjectId
     const objectId = new ObjectId(id);
     const transaction = await this.transactionRepository.findOne({ where: { _id: objectId } });
-    if (!transaction) throw new NotFoundException('Transaction not found');
-    // Set the flagged property. Ideally, the Transaction entity should have a flagged field declared.
-    transaction['flagged'] = flag;
+    if (!transaction) {
+      throw new NotFoundException('Transaction not found');
+    }
+    transaction.flagged = flag;
     return this.transactionRepository.save(transaction);
   }
-  
+
   async getDailyVolume(): Promise<number> {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const transactions = await this.transactionRepository
+    const txns = await this.transactionRepository
       .createQueryBuilder()
       .where('createdAt >= :today', { today })
       .getMany();
-    return transactions.reduce((sum, t) => sum + Math.abs(t.amount), 0);
+    return txns.reduce((sum, txn) => sum + Math.abs(txn.amount), 0);
   }
-  
-
 }

@@ -1,4 +1,3 @@
-// src/wallet/wallet.entity.ts
 import { Entity, ObjectIdColumn, Column, ObjectId } from 'typeorm';
 
 @Entity('wallets')
@@ -7,7 +6,7 @@ export class Wallet {
   _id: ObjectId;
 
   @Column()
-  userId: string;  // References the user's id
+  userId: string;  // Reference to user's id (as string)
 
   @Column({ default: 0 })
   balance: number;

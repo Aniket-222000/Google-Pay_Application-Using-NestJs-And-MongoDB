@@ -10,7 +10,6 @@ export class TransactionController {
   @Get('history')
   async getTransactionHistory(@Req() req) {
     const userId = req.user.userId;
-    const transactions = await this.transactionService.getTransactionsByUser(userId);
-    return transactions;
+    return this.transactionService.getTransactionsByUser(userId);
   }
 }

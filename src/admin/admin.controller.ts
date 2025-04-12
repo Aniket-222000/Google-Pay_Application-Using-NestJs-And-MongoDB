@@ -1,17 +1,16 @@
 import { Controller, Get, Put, Post, Param, Body, Query, UseGuards } from '@nestjs/common';
 import { AdminService } from './admin.service';
-import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 import { AdminGuard } from '../common/guards/admin.guard';
 
 @Controller('admin')
-@UseGuards(JwtAuthGuard, AdminGuard)
+@UseGuards(AuthGuard('jwt'), AdminGuard)
 export class AdminController {
   constructor(private adminService: AdminService) {}
 
-  // User Management Endpoints
+  // User Management
   @Get('users')
-  async getUsers(@Query() query) {
-    // Optional query filters (e.g., email, status) can be passed via query parameters.
+  async getUsers(@Query() query: any) {
     return this.adminService.getUsers(query);
   }
 
@@ -31,13 +30,13 @@ export class AdminController {
   }
 
   @Put('users/:id/reset-password')
-  async resetPassword(@Param('id') id: string, @Body('newPassword') newPassword: string) {
+  async resetUserPassword(@Param('id') id: string, @Body('newPassword') newPassword: string) {
     return this.adminService.resetUserPassword(id, newPassword);
   }
 
-  // Transaction Monitoring Endpoints
+  // Transaction Monitoring
   @Get('transactions')
-  async getTransactions(@Query() query) {
+  async getTransactions(@Query() query: any) {
     return this.adminService.getTransactions(query);
   }
 
@@ -51,27 +50,27 @@ export class AdminController {
     return this.adminService.flagTransaction(id, false);
   }
 
-  // System Metrics Overview
+  // System Metrics
   @Get('dashboard/metrics')
   async getMetrics() {
     return this.adminService.getSystemMetrics();
   }
 
-  // Adjust Wallet Balances
+  // Adjust Wallet
   @Put('wallet/:userId/adjust')
-  async adjustWallet(@Param('userId') userId: string, @Body() adjustDto: { amount: number, reason: string }) {
+  async adjustWallet(@Param('userId') userId: string, @Body() adjustDto: { amount: number; reason: string }) {
     return this.adminService.adjustWallet(userId, adjustDto);
   }
 
-  // Content Management (Promos/News)
+  // Content Management
   @Post('content')
-  async createContent(@Body() contentDto: { title: string, message: string }) {
+  async createContent(@Body() contentDto: { title: string; message: string }) {
     return this.adminService.createContent(contentDto);
   }
 
   // Audit Logs
   @Get('audit-logs')
-  async getAuditLogs(@Query() query) {
+  async getAuditLogs(@Query() query: any) {
     return this.adminService.getAuditLogs(query);
   }
 }
